@@ -12,7 +12,7 @@ def get_requirements(*parts):
 
 
 setup(
-    name='uninstaller',
+    name='dot-net-core-uninstaller',
     version=__version__,
     install_requires=get_requirements('requirements.txt'),
     packages=['uninstaller'],
