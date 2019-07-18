@@ -12,11 +12,11 @@ def get_requirements(*parts):
 
 
 setup(
-    name='release-exporter',
+    name='uninstaller',
     version=__version__,
     install_requires=get_requirements('requirements.txt'),
     packages=['uninstaller'],
-    url='https://github.com/akshaybabloo/asp-net-core-notes',
+    url='https://github.com/akshaybabloo/uninstall-dot-net-core',
     license='MIT',
     author='Akshay Raj Gollahalli',
     author_email='akshay@gollahalli.com',
@@ -38,7 +38,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'rex = release_exporter.cli:main'
+            'dnetcore = uninstaller.cli:main'
         ]
     }
 )
