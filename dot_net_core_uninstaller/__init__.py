@@ -8,7 +8,7 @@ import tabulate
 
 __all__ = ["__version__", "Uninstaller"]
 
-__version__ = '0.0.1'
+__version__ = '0.1.0'
 
 
 class Uninstaller:
