@@ -2,7 +2,7 @@ import codecs
 import os
 from setuptools import setup
 
-from uninstaller import __version__
+from dot_net_core_uninstaller import __version__
 
 here = os.path.abspath(os.path.dirname(__file__)) + os.sep
 
@@ -15,7 +15,7 @@ setup(
     name='dot-net-core-uninstaller',
     version=__version__,
     install_requires=get_requirements('requirements.txt'),
-    packages=['uninstaller'],
+    packages=['dot_net_core_uninstaller'],
     url='https://github.com/akshaybabloo/uninstall-dot-net-core',
     license='MIT',
     author='Akshay Raj Gollahalli',
@@ -38,7 +38,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'dnetcore = uninstaller.cli:main'
+            'dotnetcore = dot_net_core_uninstaller.cli:cli'
         ]
     }
 )
