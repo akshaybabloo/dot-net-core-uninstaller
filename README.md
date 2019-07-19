@@ -1,5 +1,7 @@
 # Uninstall .Net Core SDK and Runtime
 
+> Note: This can only be used in POSIX type operating systems.
+
 Uninstall previous .Net Core SDK's and its runtime files.
 
 > Note: You might need super user account to use this library. 
