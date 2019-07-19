@@ -6,6 +6,8 @@ import sys
 
 import tabulate
 
+__all__ = ["__version__", "Uninstaller"]
+
 __version__ = '0.0.1'
 
 
@@ -85,9 +87,13 @@ class Uninstaller:
 
         print("Done.")
 
+    def list_dotnet(self):
+        """
+        Lists all the installed .Net Core SDKs and Runtimes.
+        """
+        # TODO: this prints out both SDKs and Runtimes, need to separate them.
+        paths = self.convert_to_dict()
 
-if __name__ == '__main__':
-    # get_dotnet_version()
-    # list_dotnet_sdks()
-    # list_dotnet_runtimes()
-    Uninstaller().delete("2.2.5")
+        print()
+        print(tabulate.tabulate([[p] for p in paths], headers=["List of .Net Core Versions Installed"],
+                                tablefmt="grid", colalign=("center",)))
