@@ -19,11 +19,20 @@ def cli():
 
 @cli.command(help="Remove the version of .Net Core.")
 @click.option('--no-input', is_flag=True, help='Deletes the files without asking the user')
-@click.argument('version')
-def remove(no_input, version):
+@click.option('--sdk', help='Deletes the files without asking the user')
+@click.option('--runtime', help='Deletes the files without asking the user')
+def remove(no_input, sdk, runtime):
     if not no_input:
         click.confirm('Do you want to continue?', abort=True)
-    Uninstaller().delete(version)
+
+    if sdk:
+        Uninstaller().delete_sdk(sdk)
+
+    if runtime:
+        Uninstaller().delete_runtime(runtime)
+
+    if sdk is None and runtime is None:
+        click.echo("No SDK or runtime version provided.")
 
 
 @cli.command('list', help="List all the version of .Net Core installed.")

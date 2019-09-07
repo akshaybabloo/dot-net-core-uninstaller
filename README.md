@@ -34,7 +34,8 @@ Commands:
 To remove a version of .Net Core SDK or Runtimes:
 
 ```
-> dotnetcore remove 1.0.0
+> dotnetcore remove --sdk 1.0.0
+> dotnetcore remove --runtime 1.0.0
 ```
 
 To list all installed .Net Core libraries
@@ -49,5 +50,6 @@ To list all installed .Net Core libraries
 from dot_net_core_uninstaller import Uninstaller
 
 remove_dotnet = Uninstaller()
-remove_dotnet.delete("1.0.0")
+remove_dotnet.delete_runtime("1.0.0")
+remove_dotnet.delete_sdk("1.0.0")
 ```

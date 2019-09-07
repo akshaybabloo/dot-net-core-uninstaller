@@ -8,7 +8,7 @@ import tabulate
 
 __all__ = ["__version__", "Uninstaller"]
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 
 class Uninstaller:
@@ -49,51 +49,92 @@ class Uninstaller:
         :rtype: dict
         """
 
-        values = []
+        _sdk = []
+        _runtime = []
+
         for sdk in self._list_dotnet_sdks():
             sdk = sdk.split(' ')
-            values.append([sdk[0], sdk[1][sdk[1].find("[") + 1: sdk[1].find("]")]])
+            _sdk.append([sdk[0], sdk[1][sdk[1].find("[") + 1: sdk[1].find("]")]])
 
         for runtime in self._list_dotnet_runtimes():
             runtime = runtime.split(' ')[1:]
-            values.append([runtime[0], runtime[1][runtime[1].find("[") + 1: runtime[1].find("]")]])
+            _runtime.append([runtime[0], runtime[1][runtime[1].find("[") + 1: runtime[1].find("]")]])
 
-        out = {}
-        for key, val in values:
-            out.setdefault(key, []).append(val + '/' + key)
+        out = {
+            "sdk": {},
+            "runtime": {}
+        }
+        for key, val in _sdk:
+            out['sdk'].setdefault(key, []).append(val + '/' + key)
+        for key, val in _runtime:
+            out['runtime'].setdefault(key, []).append(val + '/' + key)
 
         return out
 
-    def delete(self, version_number: str):
+    def delete_sdk(self, version: str = None):
         """
         Deletes the path of the given version, if available.
 
-        :param str version_number: Version number of .Net Core SDK and Runtime to delete.
+        :param version: Version number of .Net Core SDK to delete
         """
         converted_dict = self.convert_to_dict()
 
-        paths = converted_dict.get(version_number)
+        if version:
+            _sdk_path = converted_dict['sdk'].get(version)
+            if not _sdk_path:
+                print("Paths not found for .Net Core SDK version {}.".format(version))
+                sys.exit(1)
 
-        if not paths:
-            logging.error("Paths not found for .Net Core version {}.".format(version_number))
-            sys.exit(1)
+            print()
+            print(tabulate.tabulate([[p] for p in _sdk_path],
+                                    headers=["Deleting SDK Version: {}".format(version)],
+                                    tablefmt="grid", colalign=("center",)))
 
-        print()
-        print(tabulate.tabulate([[p] for p in paths], headers=["Deleting Version: {}".format(version_number)],
-                                tablefmt="grid", colalign=("center",)))
+            for path in _sdk_path:
+                shutil.rmtree(path)
 
-        for path in paths:
-            shutil.rmtree(path)
+            print("Done.")
 
-        print("Done.")
+    def delete_runtime(self, version: str = None):
+        """
+        Deletes the path of the given version, if available.
+
+        :param version: Version number of .Net Core Runtime to delete
+        """
+        converted_dict = self.convert_to_dict()
+
+        if version:
+            _runtime_paths = converted_dict['runtime'].get(version)
+            if not _runtime_paths:
+                print("Paths not found for .Net Core Runtime version {}.".format(version))
+                sys.exit(1)
+
+            print()
+            print(tabulate.tabulate([[p] for p in _runtime_paths],
+                                    headers=["Deleting Runtime Version: {}".format(version)],
+                                    tablefmt="grid", colalign=("center",)))
+
+            for path in _runtime_paths:
+                shutil.rmtree(path)
+
+            print("Done.")
 
     def list_dotnet(self):
         """
         Lists all the installed .Net Core SDKs and Runtimes.
         """
-        # TODO: this prints out both SDKs and Runtimes, need to separate them.
         paths = self.convert_to_dict()
 
         print()
-        print(tabulate.tabulate([[p] for p in paths], headers=["List of .Net Core Versions Installed"],
+        print(tabulate.tabulate([[p, "\n".join(v)] for p, v in paths['sdk'].items()], headers=["SDK Version", "Path"],
                                 tablefmt="grid", colalign=("center",)))
+        print()
+        print(tabulate.tabulate([[p, "\n".join(v)] for p, v in paths['runtime'].items()],
+                                headers=["Runtime Version", "Path"],
+                                tablefmt="grid", colalign=("center",)))
+
+
+if __name__ == '__main__':
+    a = Uninstaller()
+
+    print(a.delete_runtime("1.2.3"))
