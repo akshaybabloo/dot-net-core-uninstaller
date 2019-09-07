@@ -132,9 +132,3 @@ class Uninstaller:
         print(tabulate.tabulate([[p, "\n".join(v)] for p, v in paths['runtime'].items()],
                                 headers=["Runtime Version", "Path"],
                                 tablefmt="grid", colalign=("center",)))
-
-
-if __name__ == '__main__':
-    a = Uninstaller()
-
-    print(a.delete_runtime("1.2.3"))
