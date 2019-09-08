@@ -24,7 +24,7 @@ class Uninstaller:
 
         try:
             dotnet_version = subprocess.check_output(["dotnet", "--version"]).strip()
-            print(".Net Version found: {}".format(dotnet_version.decode('utf-8')))
+            print(f".Net Version found: {dotnet_version.decode('utf-8')}")
         except FileNotFoundError as e:
             logging.error(".Net Core SDK is not installed")
             sys.exit(1)
@@ -82,12 +82,12 @@ class Uninstaller:
         if version:
             _sdk_path = converted_dict['sdk'].get(version)
             if not _sdk_path:
-                print("Paths not found for .Net Core SDK version {}.".format(version))
+                print(f"Paths not found for .Net Core SDK version {version}.")
                 sys.exit(1)
 
             print()
             print(tabulate.tabulate([[p] for p in _sdk_path],
-                                    headers=["Deleting SDK Version: {}".format(version)],
+                                    headers=[f"Deleting SDK Version: {version}"],
                                     tablefmt="grid", colalign=("center",)))
 
             for path in _sdk_path:
@@ -106,12 +106,12 @@ class Uninstaller:
         if version:
             _runtime_paths = converted_dict['runtime'].get(version)
             if not _runtime_paths:
-                print("Paths not found for .Net Core Runtime version {}.".format(version))
+                print(f"Paths not found for .Net Core Runtime version {version}.")
                 sys.exit(1)
 
             print()
             print(tabulate.tabulate([[p] for p in _runtime_paths],
-                                    headers=["Deleting Runtime Version: {}".format(version)],
+                                    headers=[f"Deleting Runtime Version: {version}"],
                                     tablefmt="grid", colalign=("center",)))
 
             for path in _runtime_paths:
