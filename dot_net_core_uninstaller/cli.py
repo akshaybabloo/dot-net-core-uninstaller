@@ -6,7 +6,7 @@ from . import __version__, Uninstaller
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo('v' + __version__)
+    click.echo(f'v{__version__}')
     ctx.exit()
 
 
