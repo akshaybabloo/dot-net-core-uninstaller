@@ -26,7 +26,7 @@ setup(
     keywords=['uninstaller', '.net core uninstaller', '.net core'],
     classifiers=[
         'License :: OSI Approved :: MIT License',
-        'Operating System :: POSIX',
+        'Operating System :: OS Independent',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
