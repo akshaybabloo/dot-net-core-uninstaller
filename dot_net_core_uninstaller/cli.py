@@ -1,6 +1,6 @@
 import click
 
-from . import __version__, Uninstaller
+from . import __version__, Uninstaller, is_windows
 
 
 def print_version(ctx, param, value):
@@ -19,20 +19,29 @@ def cli():
 
 @cli.command(help="Remove .Net Core SDK and runtime")
 @click.option('--no-input', is_flag=True, help='Deletes the files without asking the user')
-@click.option('--sdk', help='Deletes the files without asking the user')
-@click.option('--runtime', help='Deletes the files without asking the user')
+@click.option('--sdk', help='Removes SDK')
+@click.option('--runtime', help='Removes Runtime. Not supported in Windows')
 def remove(no_input, sdk, runtime):
-    if not no_input:
-        click.confirm('Do you want to continue?', abort=True)
-
-    if sdk:
-        Uninstaller().delete_sdk(sdk)
-
-    if runtime:
-        Uninstaller().delete_runtime(runtime)
 
     if sdk is None and runtime is None:
         click.echo("No SDK or runtime version provided.")
+        raise click.Abort()
+
+    if not no_input:
+        click.confirm('Do you want to continue?', abort=True)
+
+    if is_windows():
+        if sdk:
+            Uninstaller().delete_sdk_runtime_windows(sdk)
+
+        if runtime:
+            raise click.exceptions.BadOptionUsage('runtime', 'Removing runtime is not supported in Windows.')
+    else:
+        if sdk:
+            Uninstaller().delete_sdk(sdk)
+
+        if runtime:
+            Uninstaller().delete_runtime(runtime)
 
 
 @cli.command('list', help="List all the version of .Net Core SDK and runtime installed")

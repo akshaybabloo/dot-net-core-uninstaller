@@ -1,5 +1,7 @@
 import logging
+import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -10,6 +12,19 @@ __all__ = ["__version__", "Uninstaller"]
 
 __version__ = '0.2.2'
 
+WINDOWS_DOTNET_PATH = 'C:\\ProgramData\\Package Cache'
+
+
+def is_windows() -> bool:
+    """
+    Checks is the current OS is windows or not.
+
+    :return: ``True`` for windows OS
+    """
+    if platform.system().lower() == 'windows':
+        return True
+    return False
+
 
 class Uninstaller:
     """
@@ -17,10 +32,9 @@ class Uninstaller:
     """
 
     def __init__(self):
-
-        if platform.system().lower() == 'windows':
-            logging.error("Can only be used in posix systems.")
-            sys.exit(1)
+        """
+        :raise FileNotFoundError
+        """
 
         try:
             dotnet_version = subprocess.check_output(["dotnet", "--version"]).strip()
@@ -78,7 +92,12 @@ class Uninstaller:
         Deletes the path of the given version, if available.
 
         :param version: Version number of .Net Core SDK to delete
+        :raise OSError
         """
+
+        if is_windows():
+            raise OSError("This method is not supported in Windows, use 'delete_sdk_runtime_windows()'")
+
         converted_dict = self.convert_to_dict()
 
         if version:
@@ -102,7 +121,12 @@ class Uninstaller:
         Deletes the path of the given version, if available.
 
         :param version: Version number of .Net Core Runtime to delete
+        :raise OSError
         """
+
+        if is_windows():
+            raise OSError("This method is not supported in Windows, use 'delete_sdk_runtime_windows()'")
+
         converted_dict = self.convert_to_dict()
 
         if version:
@@ -128,9 +152,47 @@ class Uninstaller:
         paths = self.convert_to_dict()
 
         print()
-        print(tabulate.tabulate([[p, "\n".join(v)] for p, v in paths['sdk'].items()], headers=["SDK Version", "Path"],
+        print(tabulate.tabulate([[p, "\n".join(v)] for p, v in paths['sdk'].items()],
+                                headers=["SDK Version", "Path"],
                                 tablefmt="grid", colalign=("center",)))
         print()
         print(tabulate.tabulate([[p, "\n".join(v)] for p, v in paths['runtime'].items()],
                                 headers=["Runtime Version", "Path"],
                                 tablefmt="grid", colalign=("center",)))
+
+    def delete_sdk_runtime_windows(self, version: str):
+        """
+        Uninstalls .Net core SDK from windows.
+
+        :raise OSError
+        :raise AttributeError
+        :raise FileNotFoundError
+        """
+
+        if not is_windows():
+            raise OSError("This method is not supported in POSIX, use 'delete_sdk()' or 'delete_runtime()'")
+
+        sdk_versions = [sdk_versions for sdk_versions in self.convert_to_dict()['sdk']]
+
+        sdk_path = None
+
+        if version in sdk_versions and is_windows():
+            for root, dirs, files in os.walk(WINDOWS_DOTNET_PATH):
+                for file in files:
+                    logging.debug("Searching in path - %s", file)
+                    try:
+                        if re.search(rf'dotnet-sdk-{version}.*', file).group(0):
+                            logging.debug('Found SDK in - %s', file)
+                            sdk_path = os.path.join(root, file)
+                    except AttributeError:
+                        pass
+        else:
+            print(f".Net Core SDK {version} not found.")
+
+        if sdk_path is not None:
+            print("Opening the uninstaller")
+            subprocess.run([sdk_path, '/passive', '/uninstall'])
+            print(f'.Net Core SDK version {version} removed.')
+        else:
+            FileNotFoundError("Uninstaller not found, use Control Panel to uninstall")
+
