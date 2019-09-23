@@ -31,6 +31,14 @@ Commands:
 
 ```
 
+To list all installed .Net Core libraries
+
+```
+> dotnetcore list
+```
+
+#### Using with POSIX systems
+
 To remove a version of .Net Core SDK or Runtimes:
 
 ```
@@ -38,10 +46,14 @@ To remove a version of .Net Core SDK or Runtimes:
 > dotnetcore remove --runtime 1.0.0
 ```
 
-To list all installed .Net Core libraries
+#### Using with Windows systems
+
+> Note: Windows doesn't support removing runtime libraries individually from the uninstaller.
+
+To remove a version of .Net Core SDK or Runtime:
 
 ```
-> dotnetcore list
+> dotnetcore remove --sdk 1.0.0
 ```
 
 ### Using as a Module
@@ -50,6 +62,7 @@ To list all installed .Net Core libraries
 from dot_net_core_uninstaller import Uninstaller
 
 remove_dotnet = Uninstaller()
-remove_dotnet.delete_runtime("1.0.0")
-remove_dotnet.delete_sdk("1.0.0")
+remove_dotnet.delete_runtime("1.0.0")  # Does not work on Windows
+remove_dotnet.delete_sdk("1.0.0")  # Does not work on Windows
+remove_dotnet.delete_sdk_runtime_windows("1.0.0")  # Does not work on POSIX
 ```
