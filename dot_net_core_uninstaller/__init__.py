@@ -10,7 +10,7 @@ import tabulate
 
 __all__ = ["__version__", "Uninstaller"]
 
-__version__ = '0.2.2'
+__version__ = '0.3.0'
 
 WINDOWS_DOTNET_PATH = 'C:\\ProgramData\\Package Cache'
 
