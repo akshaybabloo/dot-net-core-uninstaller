@@ -53,21 +53,23 @@ class Uninstaller:
         _runtime = []
 
         for sdk in self._list_dotnet_sdks():
-            sdk = sdk.split(' ')
-            _sdk.append([sdk[0], sdk[1][sdk[1].find("[") + 1: sdk[1].find("]")]])
+            sdk_version = re.search(r"\d+\.\d+\.?\d+", sdk).group(0)
+            sdk_path = re.search(r"\[.*?\]", sdk).group(0)
+            _sdk.append([sdk_version, sdk_path[1:-1]])
 
         for runtime in self._list_dotnet_runtimes():
-            runtime = runtime.split(' ')[1:]
-            _runtime.append([runtime[0], runtime[1][runtime[1].find("[") + 1: runtime[1].find("]")]])
+            runtime_version = re.search(r"\d+\.\d+\.?\d+", runtime).group(0)
+            runtime_path = re.search(r"\[.*?\]", runtime).group(0)
+            _runtime.append([runtime_version, runtime_path[1:-1]])
 
         out = {
             "sdk": {},
             "runtime": {}
         }
         for key, val in _sdk:
-            out['sdk'].setdefault(key, []).append(val + '/' + key)
+            out['sdk'].setdefault(key, []).append(os.path.join(val, key))
         for key, val in _runtime:
-            out['runtime'].setdefault(key, []).append(val + '/' + key)
+            out['runtime'].setdefault(key, []).append(os.path.join(val, key))
 
         return out
 
